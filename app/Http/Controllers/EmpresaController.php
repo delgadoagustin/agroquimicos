@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EmpresaStoreRequest;
 use App\Http\Requests\EmpresaUpdateRequest;
 use App\Models\Empresa;
+use App\Models\File;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -26,6 +27,23 @@ class EmpresaController extends Controller
     public function store(EmpresaStoreRequest $request): RedirectResponse
     {
         $empresa = Empresa::create($request->validated());
+        // FILE
+        $request->validate([
+            'files' => 'required'
+            ]);
+            $fileModel = new File();
+            if($request->file()) {
+                $files = $request->file('files');
+                foreach ($files as $file) {
+                    $fileName = time().'_'.$file->getClientOriginalName();
+                    $filePath = $file->storeAs($empresa->id.'_'.$empresa->nombre, $fileName, 'public');
+                    $fileModel->nombre = time().'_'.$file->getClientOriginalName();
+                    $fileModel->directorio = $filePath;
+                    $fileModel->save();
+                }
+            }
+
+        // --------------------------
 
         $request->session()->flash('empresa.id', $empresa->id);
 
