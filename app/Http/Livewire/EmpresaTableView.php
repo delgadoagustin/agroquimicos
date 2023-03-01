@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Actions\DeleteEmpresaAction;
 use App\Models\Empresa;
 use LaravelViews\Views\TableView;
 
@@ -39,6 +40,13 @@ class EmpresaTableView extends TableView
             $model->cuit,
             $model->asesor,
             $model->matricula
+        ];
+    }
+
+    protected function actionsByRow()
+    {
+        return [
+            new DeleteEmpresaAction,
         ];
     }
 }
